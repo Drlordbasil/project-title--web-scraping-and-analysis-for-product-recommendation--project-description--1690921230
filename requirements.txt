@@ -1,0 +1,8 @@
+The package requirements for this Python program are as follows:
+
+- requests
+- bs4
+- nltk
+- sklearn
+- matplotlib
+- plotly
