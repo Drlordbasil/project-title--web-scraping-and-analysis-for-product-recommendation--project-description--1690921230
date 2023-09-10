@@ -28,8 +28,10 @@ def scrape_product_data(url):
     soup = BeautifulSoup(response.content, 'html.parser')
     product_title = soup.find('h1').text.strip()
     reviews = soup.find_all(class_='review')
-    user_reviews = [review.find(class_='text').text.strip() for review in reviews]
-    ratings = [float(review.find(class_='rating').text.strip()) for review in reviews]
+    user_reviews = [review.find(class_='text').text.strip()
+                    for review in reviews]
+    ratings = [float(review.find(class_='rating').text.strip())
+               for review in reviews]
     price = float(soup.find(class_='price').text.strip('$'))
     return Product(product_title, user_reviews, ratings, price)
 
@@ -75,10 +77,12 @@ def get_recommendations(product_data, similarity_matrix, product_titles):
     Returns a list of recommended products
     """
 
-    product_index = [title.lower() for title in product_titles].index(product_data.title.lower())
+    product_index = [title.lower() for title in product_titles].index(
+        product_data.title.lower())
     similar_products = sorted(list(enumerate(similarity_matrix[product_index])), key=lambda x: x[1], reverse=True)[
-                      :5]
-    recommendations = [(product_titles[product[0]], product[1]) for product in similar_products]
+        :5]
+    recommendations = [(product_titles[product[0]], product[1])
+                       for product in similar_products]
     return recommendations
 
 
@@ -132,7 +136,8 @@ def visualize_product_ratings(product_titles, ratings):
     Visualizes the product ratings using a bar chart
     """
 
-    fig = px.bar(x=product_titles, y=ratings, labels={'x': 'Products', 'y': 'Ratings'})
+    fig = px.bar(x=product_titles, y=ratings, labels={
+                 'x': 'Products', 'y': 'Ratings'})
     fig.show()
 
 
@@ -155,17 +160,21 @@ if __name__ == "__main__":
     similarity_matrix = build_recommendation_engine(cleaned_data[0])
     product_titles = [product_data.title]
 
-    recommendations = get_recommendations(product_data, similarity_matrix, product_titles)
+    recommendations = get_recommendations(
+        product_data, similarity_matrix, product_titles)
     display_recommendations(recommendations)
 
     while True:
         choice = input("Do you want to update the data? (y/n): ")
         if choice.lower() == 'y':
-            product_data, sentiment_scores, similarity_matrix = update_data(url, similarity_matrix, product_titles)
-            cleaned_data = process_data(product_data.reviews, product_data.ratings)
+            product_data, sentiment_scores, similarity_matrix = update_data(
+                url, similarity_matrix, product_titles)
+            cleaned_data = process_data(
+                product_data.reviews, product_data.ratings)
             sentiment_scores = perform_sentiment_analysis(cleaned_data[0])
             similarity_matrix = build_recommendation_engine(cleaned_data[0])
-            recommendations = get_recommendations(product_data, similarity_matrix, product_titles)
+            recommendations = get_recommendations(
+                product_data, similarity_matrix, product_titles)
             display_recommendations(recommendations)
         else:
             break
